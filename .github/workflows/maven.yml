@@ -38,7 +38,7 @@ jobs:
       id: version
       run: | 
         export version="$(xmlstarlet select -N x=http://maven.apache.org/POM/4.0.0 -t -v '/x:project/x:version' pom.xml)"
-        echo "$version" >> "$GITHUB_OUTPUT"
+        echo "version=$version" >> "$GITHUB_OUTPUT"
     outputs:
       version: ${{ steps.version.outputs.version }}
 
