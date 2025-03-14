@@ -14,8 +14,7 @@ jobs:
   build:
 
     runs-on: ubuntu-latest
-    outputs:
-      version: ${{ steps.version.outputs.version }}
+
     steps:
     - uses: actions/checkout@v4
     - name: Instal XMLStarlet
@@ -39,7 +38,9 @@ jobs:
       id: version
       run: | 
         export version="$(xmlstarlet select -N x=http://maven.apache.org/POM/4.0.0 -t -v '/x:project/x:version' pom.xml)"
-        echo "$version" >> "$GITHUB_OUTPUTS"
+        echo "$version" >> "$GITHUB_OUTPUT"
+    outputs:
+      version: ${{ steps.version.outputs.version }}
 
   release:
     needs: build
