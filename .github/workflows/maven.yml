@@ -44,6 +44,7 @@ jobs:
 
   release:
     needs: build
+    if: github.ref == "release"
     runs-on: ubuntu-latest
     env:
       TAG: ${{ needs.build.outputs.version }}
@@ -54,7 +55,7 @@ jobs:
         name: "build_artifact"
     - uses: softprops/action-gh-release@v2.2.1
       with:
-        tag_name: $TAG
+        tag_name: ${{ env.TAG }}
         files: build_artifact.zip
         make_latest: true
     
