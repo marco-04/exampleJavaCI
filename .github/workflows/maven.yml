@@ -43,8 +43,8 @@ jobs:
       version: ${{ steps.version.outputs.version }}
 
   release:
+    if: ${{ github.ref_name == 'release' }}
     needs: build
-    if: ${{ github.ref_name == "release" }}
     runs-on: ubuntu-latest
     env:
       TAG: ${{ needs.build.outputs.version }}
