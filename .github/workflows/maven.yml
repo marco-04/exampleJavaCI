@@ -12,43 +12,37 @@ on: [ push, workflow_dispatch ]
 
 jobs:
   build:
-
     runs-on: ubuntu-latest
-
     steps:
     - uses: actions/checkout@v4
-    - name: Instal XMLStarlet
-      run: |
-        sudo apt update
-        sudo apt install xmlstarlet
     - name: Set up JDK 23
       uses: actions/setup-java@v4
       with:
         java-version: '23'
         distribution: 'oracle'
         cache: maven
-    - name: Build with Maven
-      run: mvn -B verify --file pom.xml
-    - name: Upload a Build Artifact
-      uses: actions/upload-artifact@v4.6.1
-      with:
-        name: "build_artifact"
-        path: target/*.jar
+    # Do not build at every push, just do some tests
+    - name: Test with Maven
+      run: mvn -B test --file pom.xml
 
   release:
     if: ${{ github.ref_type == 'tag' }}
     needs: build
     runs-on: ubuntu-latest
+    permissions:
+      contents: write
     steps:
-    - name: Download a Build Artifact
-      uses: actions/download-artifact@v4.1.9
-      with:
-        name: "build_artifact"
+    - uses: actions/checkout@v4
+    - name: Build with Maven
+      run: mvn -B verify --file pom.xml # or `package`  
     - name: Tar the Jars
-      run: tar czvf ${{ github.ref_name }}.tar.gz *.jar
+      run: |
+        cd target
+        tar czvf ../${{ github.ref_name }}.tar.gz *.jar
     - uses: softprops/action-gh-release@v2.2.1
       with:
         tag_name: ${{ github.ref_name }}
         files: "${{ github.ref_name }}.tar.gz"
         make_latest: true
+
     
