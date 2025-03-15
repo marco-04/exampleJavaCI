@@ -14,9 +14,7 @@ on:
 
 jobs:
   build:
-
     runs-on: ubuntu-latest
-
     steps:
     - uses: actions/checkout@v4
     - name: Set up JDK 23
@@ -32,5 +30,22 @@ jobs:
       with:
         path: target/*.jar
         name: "build_target"
+
+  release:
+    if: ${{ github.ref_type == 'tag' }}
+    runs-on: ubuntu-latest
+    needs: build
+    steps:
+    - name: Download a Build Artifact
+      uses: actions/download-artifact@v4.1.9
+      with:
+        name: "build_target"
+    - name: Tar the Jars
+      run: tar czvf ${{ github.ref_name }}.tar.gz *.jar
+    - name: Create Release
+      uses: softprops/action-gh-release@v2.2.1
+      with:
+        tag: ${{ github.ref_name }}
+        files: "${{ github.ref_name }}.tar.gz"
 
       
