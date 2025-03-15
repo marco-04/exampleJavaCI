@@ -34,20 +34,11 @@ jobs:
       with:
         name: "build_artifact"
         path: target/*.jar
-    - name: Get release version
-      id: version
-      run: | 
-        export version="$(xmlstarlet select -N x=http://maven.apache.org/POM/4.0.0 -t -v '/x:project/x:version' pom.xml)"
-        echo "version=$version" >> "$GITHUB_OUTPUT"
-    outputs:
-      version: ${{ steps.version.outputs.version }}
 
   release:
-    if: ${{ github.ref_name == 'release' }}
+    if: ${{ github.ref_type == 'tag' }}
     needs: build
     runs-on: ubuntu-latest
-    env:
-      TAG: ${{ needs.build.outputs.version }}
     steps:
     - name: Download a Build Artifact
       uses: actions/download-artifact@v4.1.9
@@ -55,7 +46,7 @@ jobs:
         name: "build_artifact"
     - uses: softprops/action-gh-release@v2.2.1
       with:
-        tag_name: ${{ env.TAG }}
+        tag_name: ${{ github.ref_name }}
         files: "*.jar"
         make_latest: true
     
