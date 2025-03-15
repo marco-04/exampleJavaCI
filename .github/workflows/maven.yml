@@ -44,9 +44,11 @@ jobs:
       uses: actions/download-artifact@v4.1.9
       with:
         name: "build_artifact"
+    - name: Tar the Jars
+      run: tar czvf ${{ github.ref_name }}.tar.gz *.jar
     - uses: softprops/action-gh-release@v2.2.1
       with:
         tag_name: ${{ github.ref_name }}
-        files: "*.jar"
+        files: "${{ github.ref_name }}.tar.gz"
         make_latest: true
     
