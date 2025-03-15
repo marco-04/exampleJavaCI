@@ -12,15 +12,9 @@ on: [ push, workflow_dispatch ]
 
 jobs:
   build:
-
     runs-on: ubuntu-latest
-
     steps:
     - uses: actions/checkout@v4
-    - name: Instal XMLStarlet
-      run: |
-        sudo apt update
-        sudo apt install xmlstarlet
     - name: Set up JDK 23
       uses: actions/setup-java@v4
       with:
@@ -39,6 +33,8 @@ jobs:
     if: ${{ github.ref_type == 'tag' }}
     needs: build
     runs-on: ubuntu-latest
+    permissions:
+      contents: write
     steps:
     - name: Download a Build Artifact
       uses: actions/download-artifact@v4.1.9
@@ -51,4 +47,3 @@ jobs:
         tag_name: ${{ github.ref_name }}
         files: "${{ github.ref_name }}.tar.gz"
         make_latest: true
-    
