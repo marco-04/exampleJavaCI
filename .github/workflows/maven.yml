@@ -56,6 +56,6 @@ jobs:
     - uses: softprops/action-gh-release@v2.2.1
       with:
         tag_name: ${{ env.TAG }}
-        files: build_artifact.zip
+        files: "*.jar"
         make_latest: true
     
